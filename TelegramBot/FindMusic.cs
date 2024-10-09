@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 
 namespace TelegramBot
 {
@@ -8,6 +11,8 @@ namespace TelegramBot
     {
         public static async Task SearchMusicOnYouTube(ITelegramBotClient client, Update update)
         {
+            var chatId = update.Message.Chat.Id;
+            await client.SendTextMessageAsync(chatId, "Now wait, I'll send to music...");
             string musicQuery = update.Message.Text;
 
             using (HttpClient httpClient = new HttpClient())
@@ -27,8 +32,28 @@ namespace TelegramBot
                     string title = items[0]["snippet"]["title"].ToString();
                     string videoUrl = $"https://www.youtube.com/watch?v={videoId}";
 
+                    var youtube = new YoutubeClient();
+                    var streamManifest = await youtube.Videos.Streams.GetManifestAsync(videoId);
+                    var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+                    if (streamInfo != null)
+                    {
+                        var filePath = $"{title}.mp3";
+                        if (!System.IO.File.Exists(filePath))
+                        {
+                            await youtube.Videos.Streams.DownloadAsync(streamInfo, filePath);
 
-                    await client.SendTextMessageAsync(update.Message?.Chat.Id, $"Я нашел: {title}\n{videoUrl}");
+                        }
+                        using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        {
+                            await client.SendAudioAsync(update.Message.Chat.Id, new InputOnlineFile(fileStream, $"{title}.mp3"));
+                        }
+                        System.IO.File.Delete(filePath);
+                    }
+                    else
+                    {
+                        await client.SendTextMessageAsync(update.Message?.Chat.Id, "Не удалось найти аудиофайл для скачивания.");
+                    }
+
                 }
                 else
                 {

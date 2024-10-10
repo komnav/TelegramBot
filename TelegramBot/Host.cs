@@ -42,21 +42,16 @@ namespace TelegramBot
 
                     _ = FindMusic.SearchMusicOnYouTube(client, update);
                 }
-                //else
-                //{
-                //    await client.SendTextMessageAsync(chatId, "Unfortunately, I didn't find any music with that title");
-                //}
+
                 else
                 {
-
-                    InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(new[]
-                    {
-                    new []{InlineKeyboardButton.WithCallbackData("Find Sticker", "sticker_clicked") },
-                    new []{InlineKeyboardButton.WithCallbackData("Convert photo to .jpg", ".jpg_clicked") },
-                    new []{InlineKeyboardButton.WithCallbackData("Image quality enhancement", "image_clicked") },
-                    new []{InlineKeyboardButton.WithCallbackData("Find Music", "music_clicked") },
-
-                });
+                    List<List<InlineKeyboardButton>> inlineKeyboardButtons = [];
+                    inlineKeyboardButtons.Add([InlineKeyboardButton.WithCallbackData("Find Sticker", "sticker_clicked")]);
+                    inlineKeyboardButtons.Add([InlineKeyboardButton.WithCallbackData("Convert photo to .jpg", ".jpg_clicked")]);
+                    inlineKeyboardButtons.Add([InlineKeyboardButton.WithCallbackData("Image quality enhancement", "image_clicked")]);
+                    inlineKeyboardButtons.Add([InlineKeyboardButton.WithCallbackData("Find Music", "music_clicked")]);
+                    inlineKeyboardButtons.Add([InlineKeyboardButton.WithCallbackData("Find vidio in youtube", "vidio_clicked")]);
+                    InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(inlineKeyboardButtons);
 
                     await client.SendTextMessageAsync(chatId, "Welcom to Our service", replyMarkup: keyboard, cancellationToken: token);
                 }
@@ -89,6 +84,27 @@ namespace TelegramBot
                 {
                     await client.SendTextMessageAsync(chatId, "Please send me name music");
                     _waitingForMusicName[chatId] = true;
+                }
+                else if (callbackQuery.Data == "vidio_clicked")
+                {
+                    await client.SendTextMessageAsync(chatId, "Please send me name vidio");
+                    _waitingForMusicName[chatId] = true;
+
+                }
+            }
+            else if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
+            {
+                var chatId = update.Message.Chat.Id;
+
+                if (_waitingForPhoto.ContainsKey(chatId) && _waitingForPhoto[chatId])
+                {
+                    _waitingForMusicName[chatId] = false;
+
+                    _ = FindVidioInYoutube.FindVidioInYoutubeAsync(client, update);
+                }
+                else
+                {
+                    await client.SendTextMessageAsync(chatId, "I'm not waiting for a vidio right now.");
                 }
             }
             else if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Photo)

@@ -18,7 +18,8 @@ namespace TelegramBot
             using (HttpClient httpClient = new HttpClient())
             {
 
-                string url = $"https://www.googleapis.com/youtube/v3/search?part=snippet&q={Uri.EscapeDataString(musicQuery)}&type=video&key=AIzaSyALg0X4s6nxDZPkL6-9JwC9hk62sCBicsw";
+                string url = $"https://www.googleapis.com/youtube/v3/search?part=snippet&q=" +
+                    $"{Uri.EscapeDataString(musicQuery)}&type=video&key=AIzaSyALg0X4s6nxDZPkL6-9JwC9hk62sCBicsw";
 
                 HttpResponseMessage response = await httpClient.GetAsync(url);
                 string jsonResponse = await response.Content.ReadAsStringAsync();

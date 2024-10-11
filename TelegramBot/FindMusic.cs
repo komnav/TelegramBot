@@ -7,11 +7,14 @@ using YoutubeExplode.Videos.Streams;
 
 namespace TelegramBot
 {
-    public class FindMusic
+    public class FindMusic : ITelegrammAction
     {
-        public static async Task SearchMusicOnYouTube(ITelegramBotClient client, Update update)
+        public string ActionKey => "music_clicked";
+
+        public string ActionTitle => "Find Music";
+
+        public async Task<bool> RunAction(ITelegramBotClient client, Update update, bool isCallback, long chatId)
         {
-            var chatId = update.Message.Chat.Id;
             await client.SendTextMessageAsync(chatId, "Now wait, I'll send to music...");
             string musicQuery = update.Message.Text;
 
@@ -62,6 +65,8 @@ namespace TelegramBot
                 }
 
             }
+
+            return false;
         }
     }
 }

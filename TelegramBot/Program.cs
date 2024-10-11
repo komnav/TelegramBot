@@ -1,34 +1,33 @@
-﻿using Telegram.Bot;
-using Telegram.Bot.Types;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TelegramBot;
 
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
-        Host g4bot = new Host("8108866828:AAEWIXfwG0oU3aM-NmUtcSjZ0aZT23jG7Mg");
-        g4bot.Start();
-        g4bot.OnMessage += OnMessage;
+        // Create a host with DI and Configuration setup
+        var host = Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((context, config) =>
+            {
+                // Load configuration from appsettings.json
+                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            })
+            .ConfigureServices((context, services) =>
+            {
+                services.AddSingleton<TelegrammApp>();
+                services.AddSingleton<ITelegrammAction, SendSticker>();
+                services.AddSingleton<ITelegrammAction, ImageConverter>();
+                services.AddSingleton<ITelegrammAction, EnhanceImage>();
+                services.AddSingleton<ITelegrammAction, FindMusic>();
+                services.AddSingleton<ITelegrammAction, FindVidioInYoutube>();
+            })
+            .Build();
 
+
+        var telegrammApp = host.Services.GetRequiredService<TelegrammApp>();
+        telegrammApp.Start();
         Console.ReadLine();
-    }
-
-    private static async void OnMessage(ITelegramBotClient client, Update update)
-    {
-        if (update.Message?.Text == "/start")
-        {
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? 1891099619, "Welcome",
-                replyToMessageId: update.Message?.MessageId);
-        }
-        else if (update.Message?.Text == "/help")
-        {
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? 1891099619, "My command\n/start\n/help",
-                replyToMessageId: update.Message?.MessageId);
-        }
-        else
-        {
-            await client.SendTextMessageAsync(update.Message?.Chat.Id ?? 8108866828, update.Message?.Text ?? "[no message]",
-                replyToMessageId: update.Message?.MessageId);
-        }
     }
 }

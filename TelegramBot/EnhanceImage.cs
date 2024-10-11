@@ -8,14 +8,17 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace TelegramBot
 {
-    public class EnhanceImage
+    public class EnhanceImage : ITelegrammAction
     {
-        public static async Task EnchanceImageAsync(ITelegramBotClient client, Update update)
+        public string ActionKey => "image_clicked";
+
+        public string ActionTitle => "Image quality enhancement";
+
+        public async Task<bool> RunAction(ITelegramBotClient client, Update update, bool isCallback, long chatId)
         {
             var message = update.Message;
             if (message?.Document != null)
             {
-
                 await client.SendTextMessageAsync(message.Chat.Id, "Now, wait, I'll process the document...");
 
                 var fileId = update.Message.Document.FileId;
@@ -51,9 +54,9 @@ namespace TelegramBot
                 {
                     await client.SendTextMessageAsync(message.Chat.Id, "This document is not an image.");
                 }
-                return;
+                return false;
             }
-
+            return false;
         }
     }
 }

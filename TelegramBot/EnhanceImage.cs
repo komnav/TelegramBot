@@ -16,6 +16,11 @@ namespace TelegramBot
 
         public async Task<bool> RunAction(ITelegramBotClient client, Update update, bool isCallback, long chatId)
         {
+            if (!isCallback)
+            {
+                await client.SendTextMessageAsync(chatId, "Send me document");
+                return true;
+            }
             var message = update.Message;
             if (message?.Document != null)
             {
@@ -54,7 +59,6 @@ namespace TelegramBot
                 {
                     await client.SendTextMessageAsync(message.Chat.Id, "This document is not an image.");
                 }
-                return false;
             }
             return false;
         }

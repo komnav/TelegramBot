@@ -15,12 +15,17 @@ namespace TelegramBot
 
         public async Task<bool> RunAction(ITelegramBotClient client, Update update, bool isCallback, long chatId)
         {
-            await client.SendTextMessageAsync(chatId, "Now wait, I'll send to music...");
-            string musicQuery = update.Message.Text;
+          
+            string musicQuery = update.Message?.Text;
 
             using (HttpClient httpClient = new HttpClient())
             {
-
+                if (!isCallback)
+                {
+                    await client.SendTextMessageAsync(chatId, "Send me name music");
+                    return true;
+                }
+                await client.SendTextMessageAsync(chatId, "Now wait, I'll send to music...");
                 string url = $"https://www.googleapis.com/youtube/v3/search?part=snippet&q=" +
                     $"{Uri.EscapeDataString(musicQuery)}&type=video&key=AIzaSyALg0X4s6nxDZPkL6-9JwC9hk62sCBicsw";
 

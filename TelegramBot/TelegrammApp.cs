@@ -70,51 +70,6 @@ namespace TelegramBot
                     await client.SendTextMessageAsync(chatId, "Not the right move");
                 }
             }
-            //else if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
-            //{
-            //    var chatId = update.Message.Chat.Id;
-
-            //    if (_waitingForPhoto.ContainsKey(chatId) && _waitingForPhoto[chatId])
-            //    {
-            //        _waitingForMusicName[chatId] = false;
-
-            //        _ = FindVidioInYoutube.FindVidioInYoutubeAsync(client, update);
-            //    }
-            //    else
-            //    {
-            //        await client.SendTextMessageAsync(chatId, "I'm not waiting for a vidio right now.");
-            //    }
-            //}
-            //else if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Photo)
-            //{
-            //    var chatId = update.Message.Chat.Id;
-
-            //    if (_waitingForPhoto.ContainsKey(chatId) && _waitingForPhoto[chatId])
-            //    {
-            //        _waitingForPhoto[chatId] = false;
-
-            //        _ = ImageConverter.ConvertToJpgAsync(client, update);
-            //    }
-            //    else
-            //    {
-            //        await client.SendTextMessageAsync(chatId, "I'm not waiting for a photo right now.");
-            //    }
-            //}
-            //else if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Document)
-            //{
-            //    var chatId = update.Message.Chat.Id;
-
-            //    if (_waitingForPhoto.ContainsKey(chatId) && _waitingForPhoto[chatId])
-            //    {
-            //        _waitingForPhoto[chatId] = false;
-
-            //        _ = EnhanceImage.EnchanceImageAsync(client, update);
-            //    }
-            //    else
-            //    {
-            //        await client.SendTextMessageAsync(chatId, "I'm not waiting for a document right now.");
-            //    }
-            //}
         }
 
         private long? GetChatId(Update update)
